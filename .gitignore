@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,3 +128,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+=======
+venv/
+.idea/
+>>>>>>> bb69592 (First commit, time calculator developed, budget app is in progress)
