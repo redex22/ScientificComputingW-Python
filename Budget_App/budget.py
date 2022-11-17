@@ -20,14 +20,17 @@ class Category:
         If there are not enough funds, nothing should be added to the ledger.
         This method should return True if the withdrawal took place, and False otherwise.
         """
-        pass
+        if not self.check_funds(amount):
+            return False
+        self.ledger.append({"amount": -amount, "description": description})
+        return True
 
     def get_balance(self) -> float:
         """
         Returns the current balance of the budget category based on the deposits and withdrawals
         that have occurred.
         """
-        return float([moves.get("amount", 0) for moves in self.ledger][0])
+        return sum([moves.get("amount", 0) for moves in self.ledger])
 
     def transfer(self, amount: float, budget) -> bool:
         """
@@ -83,3 +86,5 @@ if __name__ == "__main__":
     print(t1.ledger[0]) # -> {'amount': 900, 'description': 'deposit'}
     print(t1.get_balance())
     print(t1.check_funds(899.01))
+    print(t1.withdraw(100, "debt with a friend"))
+    print(t1.get_balance())
