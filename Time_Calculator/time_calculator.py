@@ -87,7 +87,19 @@ def add_time(start: str, duration: str, day: str = "") -> str:
 
 
 if __name__ == "__main__":
-    print(add_time("11:40 AM", "0:25"))
-    print(add_time("11:55 AM", "3:07"))
-    print(add_time("11:59 PM", "24:05"))
-    print(add_time("2:59 AM", "24:00", "saturDay"))
+    print(to_new_hour(10, 36))
+    print(to_new_hour(10, 1))
+    print(to_new_minutes(10, 30, 25))
+    print(to_new_minutes(10, 30, 31))
+    print(to_new_minutes(10, 30, 30))
+    print(clock_variables("10:00 AM"))
+    print(duration_variables("2:00"))
+    print(add_time("1:10 PM", "1:10")) # 2:20 PM
+    print(add_time("1:10 PM", "12:00")) # 1:10 AM
+    print(add_time("3:02 PM", "3:02"))
+    print(add_time("11:59 PM", "24:05", "Wednesday"))
+    print(add_time("1:10 PM", "60:00")) # 1:10 AM (2 days later)
+    print(add_time("1:10 PM", "60:00", "Monday")) # 1:10 AM, Wednesday (2 days later)
+    print(add_time("9:15 PM", "5:30")) # 2:45 PM (next day)
+    print(add_time("11:55 AM", "3:12"))
+    print(add_time("12:05 PM", "12:00"))

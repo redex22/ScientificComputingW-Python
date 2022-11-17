@@ -1,0 +1,2 @@
+class DigitsConstraint(Exception):
+    pass

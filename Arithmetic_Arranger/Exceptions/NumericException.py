@@ -1,0 +1,2 @@
+class NumericConstraint(Exception):
+    pass
