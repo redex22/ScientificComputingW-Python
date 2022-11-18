@@ -44,7 +44,9 @@ class Category:
         :param budget:
         :return:
         """
-        pass
+        if not self.withdraw(amount, description=f"Transfer to {budget.category}"): return False
+        budget.deposit(amount, description=f"Transfer from {self.category}")
+        return True
 
     def check_funds(self, amount: float) -> bool:
         """
@@ -60,9 +62,10 @@ class Category:
     def formatted_str_return(self):
         str_ret = f"{self.category.center(30, '*')}\n"
         for led in self.ledger:
-            descr = led['description'] if len(led['description']) + len(str(led['amount']))+1 <= 30 else \
-                    led['description'][:30-len(format(led['amount'], '.2f'))-1]
-            str_ret += f"{descr}{' ' * (30 - len(descr) - len(format(led['amount'], '.2f')))}" \
+            amount = format(led['amount'], '.2f')
+            descr = led['description'] if len(led['description']) + len(amount) + 1 < 30 else \
+                led['description'][:29 - len(amount)]
+            str_ret += f"{descr}{' ' * (30 - len(descr) - len(amount))}" \
                        f"{led['amount']:.2f}\n"
         str_ret += f"Total: {self.get_balance()}"
         return str_ret
@@ -91,6 +94,14 @@ def create_spend_chart(categories: list) -> str:
 if __name__ == "__main__":
     # This is for testing purposes
     food = Category("Food")
+    business = Category("Business")
+    entertainment = Category("Entertainment")
     food.deposit(900, "deposit")
-    food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
-    print(food)
+    entertainment.deposit(900, "deposit")
+    business.deposit(900, "deposit")
+    food.withdraw(105.55)
+    entertainment.withdraw(33.40)
+    business.withdraw(10.99)
+    actual = create_spend_chart([business, food, entertainment])
+    expected = "Percentage spent by category\n100|          \n 90|          \n 80|          \n 70|    o     \n 60|    o     \n 50|    o     \n 40|    o     \n 30|    o     \n 20|    o  o  \n 10|    o  o  \n  0| o  o  o  \n    ----------\n     B  F  E  \n     u  o  n  \n     s  o  t  \n     i  d  e  \n     n     r  \n     e     t  \n     s     a  \n     s     i  \n           n  \n           m  \n           e  \n           n  \n           t  "
+
