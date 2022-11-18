@@ -1,8 +1,8 @@
 class Category:
-    ledger = list()
 
     def __init__(self, category: str):
         self.category = category
+        self.ledger = list()
 
     def deposit(self, amount: float, description: str = "") -> None:
         """
@@ -20,8 +20,7 @@ class Category:
         If there are not enough funds, nothing should be added to the ledger.
         This method should return True if the withdrawal took place, and False otherwise.
         """
-        if not self.check_funds(amount):
-            return False
+        if not self.check_funds(amount): return False
         self.ledger.append({"amount": -amount, "description": description})
         return True
 
@@ -30,7 +29,7 @@ class Category:
         Returns the current balance of the budget category based on the deposits and withdrawals
         that have occurred.
         """
-        return sum([moves.get("amount", 0) for moves in self.ledger])
+        return round(sum([moves.get("amount", 0) for moves in self.ledger]), 2)
 
     def transfer(self, amount: float, budget) -> bool:
         """
@@ -58,6 +57,16 @@ class Category:
         """
         return not amount > self.get_balance()
 
+    def formatted_str_return(self):
+        str_ret = f"{self.category.center(30, '*')}\n"
+        for led in self.ledger:
+            descr = led['description'] if len(led['description']) + len(str(led['amount']))+1 <= 30 else \
+                    led['description'][:30-len(format(led['amount'], '.2f'))-1]
+            str_ret += f"{descr}{' ' * (30 - len(descr) - len(format(led['amount'], '.2f')))}" \
+                       f"{led['amount']:.2f}\n"
+        str_ret += f"Total: {self.get_balance()}"
+        return str_ret
+
     def __repr__(self) -> str:
         """
         -A title line of 30 characters where the name of the category is centered in a line of * characters.
@@ -67,7 +76,7 @@ class Category:
          The amount should be right aligned, contain two decimal places, and display a maximum of 7 characters.
         -A line displaying the category total.
         """
-        return "hola soy una prueba"
+        return self.formatted_str_return()
 
 
 def create_spend_chart(categories: list) -> str:
@@ -81,10 +90,7 @@ def create_spend_chart(categories: list) -> str:
 
 if __name__ == "__main__":
     # This is for testing purposes
-    t1 = Category("food")
-    t1.deposit(900, "deposit")
-    print(t1.ledger[0]) # -> {'amount': 900, 'description': 'deposit'}
-    print(t1.get_balance())
-    print(t1.check_funds(899.01))
-    print(t1.withdraw(100, "debt with a friend"))
-    print(t1.get_balance())
+    food = Category("Food")
+    food.deposit(900, "deposit")
+    food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+    print(food)
