@@ -82,13 +82,77 @@ class Category:
         return self.formatted_str_return()
 
 
+def calculate_percentage_spend(budgets: list[Category]) -> list:
+    """
+    Takes a list  of Category objects and calculates the percentages for each withdraw of the accounts
+    """
+    withdraws = [trans['amount'] for budget in budgets for trans in budget.ledger if trans['amount'] < 0]
+    total = sum(withdraws)
+    withdraws_percentages = [int(round((withdraw*100)/total, 0)) for withdraw in withdraws]
+    return withdraws_percentages
+
+
+def create_barchart(percentages: list[int]) -> str:
+    """
+    Takes a list of percentages rounded to 0 extra digits and creates a barchart returning it as a string
+    """
+    barchart = ""
+    for percentage in range(100, -10, -10):
+        barchart += str(percentage).rjust(3)+"|"
+        for balance in percentages:
+            text = "   "
+            if percentage <= balance:
+                text = " o "
+            barchart += text
+        barchart += " \n"
+    return barchart
+
+
+def get_categories_names(categories: list[Category]) -> list[str]:
+    """
+    Takes a list of Category objects and returns a list with the names of each Category object
+    """
+    return [category.category for category in categories]
+
+
+def get_longest_name(names: list[str]) -> int:
+    """
+    Takes a list of names and returns the longest name
+    """
+    return len(max(names, key=len))
+
+
+def create_bottom_barchart(stop: int, names: list[str]) -> str:
+    """
+    Takes a list of names and the longest of them returning the xlab of the barchart with the names vertically sided
+    """
+    bottom = ""
+    for index in range(stop):
+        bottom += f"{' '*5}"
+        for name in names:
+            text = f"{' '* 3}"
+            if len(name) > index:
+                text = f"{name[index]}  "
+            bottom += text
+        if index != stop-1:
+            bottom += "\n"
+    return bottom
+
+
 def create_spend_chart(categories: list) -> str:
     """
     Takes a list of categories as an argument. It should return a string that is a bar chart.
     :param categories:
     :return:
     """
-    pass
+    header = "Percentage spent by category\n"
+    balances_percentages = calculate_percentage_spend(categories)
+    header += create_barchart(balances_percentages)
+    header += f"{' '*4}{'-'*(len(categories)*3)}-\n"
+    names = get_categories_names(categories)
+    longest_name = get_longest_name(names)
+    header += create_bottom_barchart(longest_name, names)
+    return header
 
 
 if __name__ == "__main__":
@@ -104,4 +168,5 @@ if __name__ == "__main__":
     business.withdraw(10.99)
     actual = create_spend_chart([business, food, entertainment])
     expected = "Percentage spent by category\n100|          \n 90|          \n 80|          \n 70|    o     \n 60|    o     \n 50|    o     \n 40|    o     \n 30|    o     \n 20|    o  o  \n 10|    o  o  \n  0| o  o  o  \n    ----------\n     B  F  E  \n     u  o  n  \n     s  o  t  \n     i  d  e  \n     n     r  \n     e     t  \n     s     a  \n     s     i  \n           n  \n           m  \n           e  \n           n  \n           t  "
-
+    print(expected)
+    print(actual, actual == expected )
